@@ -1,0 +1,11 @@
+langsmith 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
+
+# gitlab_url = "https://innersource.soprasteria.com/"           
+# private_token = "PsHt1b7wjKDfiaX99AwE"
+# project_id = "448042"
+            # postGreSQLinfo = {
+            #     "id_postgresql": "postgres",
+            #     "pswd_postgresql": "open3570",
+            #     "db_name": "vectorizedplaybooks",
+            #     "table_name": "vector_table",
+            # }
