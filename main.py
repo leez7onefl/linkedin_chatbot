@@ -245,14 +245,14 @@ with st.sidebar:
 #______________________________________________________________
 
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you today?"}]
+    st.session_state["messages"] = [{"role": "assistant", "content": "Ask me anything regarding Léonard Gonzalez ! 🔮"}]
 
 for message in st.session_state['messages']:
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
 def clear_chat_history():
-    st.session_state['messages'] = [{"role": "assistant", "content": "How can I help you today?"}]
+    st.session_state['messages'] = [{"role": "assistant", "content": "Ask me anything regarding Léonard Gonzalez ! 🔮"}]
 
 st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
 
