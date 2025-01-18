@@ -183,7 +183,6 @@ def query_pinecone_index(index, query_vector, top_k=5):
 #______________________________________________________________
 
 load_multiple_envs([
-    ['secrets', 'keys.env'],
     ['env', '.env']
 ])
 env_variables = {
