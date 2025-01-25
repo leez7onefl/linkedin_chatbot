@@ -224,6 +224,7 @@ st.markdown(
 # Sidebar Configuration
 with st.sidebar:
     st.title("Leonard's AI profile 📱")
+    st.image(https://media.licdn.com/dms/image/v2/D4E03AQHVJQphgpBZsA/profile-displayphoto-shrink_800_800/B4EZRQ1Vo0HsAg-/0/1736522947560?e=1743033600&v=beta&t=aOvVBtCVATAAlVg9nRWN5heYeRPXoeAMIA0w-ZdRlsY)
 
     with st.expander("Parameters"):
         selected_model = st.selectbox('Model', ['gpt-4o', 'o1-mini', 'gpt-3.5-turbo'], key='selected_model')
