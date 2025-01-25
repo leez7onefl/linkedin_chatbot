@@ -51,20 +51,20 @@ def get_embedding(text, model="text-embedding-3-small"):
     )
     return response.data[0].embedding
 
-def summarize_text(text, model="gpt-3.5-turbo", max_length=2048):
+def summarize_text(text, model="gpt-4o", max_length=512):
     """Summarize the given text."""
     try:
         response = openai.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": f"Summarize the following text:\n\n{text}"}],
             max_tokens=max_length,
-            temperature=0.5
+            temperature=0.7
         )
         return response.choices[0].message.content
     except Exception as e:
         return f"Summary error: {str(e)}"
 
-def refine_response(text, prompt, model="gpt-4o", max_length=512):
+def refine_response(text, prompt, model="gpt-4o", max_length=1024):
     """Refine the response based on the prompt."""
     try:
         response = openai.chat.completions.create(
@@ -164,7 +164,7 @@ def store_vectors_in_pinecone(index, vectors):
     """Store vectors in the Pinecone index."""
     index.upsert(vectors=vectors, namespace="ns1")
 
-def query_pinecone_index(index, query_vector, top_k=5):
+def query_pinecone_index(index, query_vector, top_k=3):
     """Query the Pinecone index."""
     response = index.query(
         namespace="ns1",
@@ -226,7 +226,7 @@ with st.sidebar:
     st.title("Leonard's AI profile 📱")
 
     with st.expander("Parameters"):
-        selected_model = st.selectbox('Model', ['gpt-4o'], key='selected_model')
+        selected_model = st.selectbox('Model', ['gpt-4o', 'o1-mini', 'gpt-3.5-turbo'], key='selected_model')
         temperature = st.slider('Creativity -/+:', min_value=0.01, max_value=1.0, value=0.8, step=0.01)
         top_p = st.slider('Words randomness -/+:', min_value=0.01, max_value=1.0, value=0.95, step=0.01)
         freq_penalty = st.slider('Frequency Penalty -/+:', min_value=-1.99, max_value=1.99, value=0.0, step=0.01)
@@ -259,14 +259,23 @@ if user_input := st.chat_input(placeholder="Enter your message"):
     st.write(f"**User:** {user_input}")
 
     with st.spinner("Thinking . . . "):
-        # Include entire chat history for context
-        conversation_history = st.session_state.messages
+        # Get the embedding for the user prompt
+        query_vector = get_embedding(user_input)
         
-        # Generate a new OpenAI response including chat history
-        openai_response = generate_openai_response("You are a helpful assistant.", user_input, model_params, env_variables)
+        # Query the Pinecone index
+        results = query_pinecone_index(pinecone_index, query_vector)
         
-        # Display assistant's response
-        st.write(f"**Assistant:** {openai_response}")
+        # Compile summaries from queried results
+        all_summaries = "\n".join([
+            f"File: {item.metadata['file_path']} - Summary: {item.metadata['summary']} - Score: {item['score']}"
+            for item in results if item.metadata
+        ]) if results else "No relevant information found."
+        
+        # Refine the response based on available summaries
+        refined_response = refine_response(all_summaries, user_input)
+        
+        # Display the assistant's response
+        st.write(f"**Assistant:** {refined_response}")
 
-        # Append assistant's response to the chat history
-        st.session_state.messages.append({"role": "assistant", "content": openai_response})
+    # Append assistant's response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": refined_response})
