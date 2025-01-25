@@ -259,23 +259,14 @@ if user_input := st.chat_input(placeholder="Enter your message"):
     st.write(f"**User:** {user_input}")
 
     with st.spinner("Thinking . . . "):
-        # Get the embedding for the user prompt
-        query_vector = get_embedding(user_input)
+        # Include entire chat history for context
+        conversation_history = st.session_state.messages
         
-        # Query the Pinecone index
-        results = query_pinecone_index(pinecone_index, query_vector)
+        # Generate a new OpenAI response including chat history
+        openai_response = generate_openai_response("You are a helpful assistant.", user_input, model_params, env_variables)
         
-        # Compile summaries from queried results
-        all_summaries = "\n".join([
-            f"File: {item.metadata['file_path']} - Summary: {item.metadata['summary']} - Score: {item['score']}"
-            for item in results if item.metadata
-        ]) if results else "No relevant information found."
-        
-        # Refine the response based on available summaries
-        refined_response = refine_response(all_summaries, user_input)
-        
-        # Display the assistant's response
-        st.write(f"**Assistant:** {refined_response}")
+        # Display assistant's response
+        st.write(f"**Assistant:** {openai_response}")
 
-    # Append assistant's response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": refined_response})
+        # Append assistant's response to the chat history
+        st.session_state.messages.append({"role": "assistant", "content": openai_response})
