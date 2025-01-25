@@ -226,7 +226,7 @@ with st.sidebar:
     st.title("Leonard's AI profile 📱")
 
     with st.expander("Parameters"):
-        selected_model = st.selectbox('Model', ['GPT-4o'], key='selected_model')
+        selected_model = st.selectbox('Model', ['gpt-4o'], key='selected_model')
         temperature = st.slider('Creativity -/+:', min_value=0.01, max_value=1.0, value=0.8, step=0.01)
         top_p = st.slider('Words randomness -/+:', min_value=0.01, max_value=1.0, value=0.95, step=0.01)
         freq_penalty = st.slider('Frequency Penalty -/+:', min_value=-1.99, max_value=1.99, value=0.0, step=0.01)
