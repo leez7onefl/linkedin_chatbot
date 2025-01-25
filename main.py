@@ -42,7 +42,7 @@ def generate_openai_response(system_prompt, user_prompt, model_params, env_varia
     except Exception as e:
         return f"An error occurred: {str(e)}"
 
-def get_embedding(text, model="text-embedding-ada-002"):
+def get_embedding(text, model="text-embedding-3-small"):
     """Get text embedding."""
     response =  openai.embeddings.create(
         model=model,
@@ -51,7 +51,7 @@ def get_embedding(text, model="text-embedding-ada-002"):
     )
     return response.data[0].embedding
 
-def summarize_text(text, model="gpt-3.5-turbo", max_length=300):
+def summarize_text(text, model="gpt-3.5-turbo", max_length=2048):
     """Summarize the given text."""
     try:
         response = openai.chat.completions.create(
@@ -64,7 +64,7 @@ def summarize_text(text, model="gpt-3.5-turbo", max_length=300):
     except Exception as e:
         return f"Summary error: {str(e)}"
 
-def refine_response(text, prompt, model="gpt-3.5-turbo", max_length=1024):
+def refine_response(text, prompt, model="gpt-4o", max_length=512):
     """Refine the response based on the prompt."""
     try:
         response = openai.chat.completions.create(
@@ -226,7 +226,7 @@ with st.sidebar:
     st.title("Leonard's AI profile 📱")
 
     with st.expander("Parameters"):
-        selected_model = st.selectbox('Model', ['GPT-4o', 'o1-mini', 'gpt-3.5-turbo'], key='selected_model')
+        selected_model = st.selectbox('Model', ['GPT-4o'], key='selected_model')
         temperature = st.slider('Creativity -/+:', min_value=0.01, max_value=1.0, value=0.8, step=0.01)
         top_p = st.slider('Words randomness -/+:', min_value=0.01, max_value=1.0, value=0.95, step=0.01)
         freq_penalty = st.slider('Frequency Penalty -/+:', min_value=-1.99, max_value=1.99, value=0.0, step=0.01)
